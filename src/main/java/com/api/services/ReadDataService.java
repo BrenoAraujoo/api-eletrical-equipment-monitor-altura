@@ -33,8 +33,8 @@ public class ReadDataService {
         repository.deleteById(id);
     }
 
-    public void update(ReadData measure) {
-        repository.findById(measure.getId());
-        repository.save(measure);
+    public void update(ReadData data) {
+        repository.findById(data.getId());
+        repository.save(data);
     }
 }
