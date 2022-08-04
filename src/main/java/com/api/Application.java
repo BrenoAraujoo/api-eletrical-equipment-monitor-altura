@@ -9,6 +9,8 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -23,18 +25,18 @@ public class Application {
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
 	}
-	@Component
-	public  class Runner implements ApplicationRunner{
-		@Autowired
-		ReadDataRepository repository;
 
-		@Value("${password}")
-		String msg;
-		@Override
-		public void run(ApplicationArguments args) throws Exception {
-			System.out.println(msg);
+		public WebMvcConfigurer corsConfigurer() {
+			return new WebMvcConfigurer() {
+				@Override
+				public void addCorsMappings(CorsRegistry registry) {
+					registry.addMapping("/**").allowedOrigins("http://localhost:8080").allowedMethods("GET","POST");
+					registry.addMapping("/**").allowedOrigins("http://127.0.0.1:5500/").allowedMethods("GET","POST");
+
+				}
+			};
 		}
 
 	}
 
-}
+
