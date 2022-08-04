@@ -2,12 +2,16 @@ package com.api.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+
+import java.io.Serializable;
 import java.time.Instant;
 
 
 @Entity
 @Table(name= "tb_read_data")
-public class ReadData {
+public class ReadData implements Serializable {
+
+    private static final long serialVersionUID = 8705916799906125269L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

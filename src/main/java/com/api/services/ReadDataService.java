@@ -2,6 +2,7 @@ package com.api.services;
 
 
 import com.api.entities.ReadData;
+import com.api.exceptions.ResourceNotFoundException;
 import com.api.repositories.ReadDataRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ public class ReadDataService {
     ReadDataRepository repository;
 
     public ReadData findById(Long id) {
-        return repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Measure not found!"));
+        return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Measure not found!"));
     }
 
     public List<ReadData> findAll() {
@@ -28,7 +29,7 @@ public class ReadDataService {
 
     public void delete(Long id) {
         if (repository.findById(id).isEmpty()) {
-            throw new EntityNotFoundException("Measure not found! ");
+            throw new EntityNotFoundException("Data not found! ");
         }
         repository.deleteById(id);
     }

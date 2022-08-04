@@ -3,6 +3,7 @@ package com.api;
 import com.api.entities.ReadData;
 import com.api.repositories.ReadDataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
@@ -26,17 +27,14 @@ public class Application {
 	public  class Runner implements ApplicationRunner{
 		@Autowired
 		ReadDataRepository repository;
+
+		@Value("${password}")
+		String msg;
 		@Override
 		public void run(ApplicationArguments args) throws Exception {
-
-
-			ReadData data = new ReadData(null,200.00, Instant.parse("2022-08-03T16:08:50Z"));
-			repository.save(data);
-			System.out.println(data.getDateTime());
-
-
-
+			System.out.println(msg);
 		}
+
 	}
 
 }
