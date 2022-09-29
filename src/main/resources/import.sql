@@ -1,0 +1,1 @@
+INSERT INTO tb_equipment (description, measurement_type) values ('equipament 1','2');
