@@ -1,3 +1,7 @@
-spring.datasource.url=${DATASOURCE_URL}
-spring.profiles.active=dev
-spring.jpa.open-in-view=true
+spring:
+  datasource:
+  url: ${DATASOURCE_URL}
+  profiles:
+    active: dev
+  jpa:
+  open-in-view: true
