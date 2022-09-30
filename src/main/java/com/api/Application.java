@@ -1,19 +1,24 @@
 package com.api;
 
+import com.api.entities.enums.MeasurementType;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @SpringBootApplication
-public class Application {
+public class Application implements CommandLineRunner {
 
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
 	}
 
 
+	@Override
+	public void run(String... args) throws Exception {
+		for(MeasurementType t: MeasurementType.values()){
+			System.out.println(" ---- >" + t.getCode());
+		}
 	}
+}
 
 

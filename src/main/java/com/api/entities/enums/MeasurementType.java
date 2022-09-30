@@ -1,12 +1,11 @@
 package com.api.entities.enums;
 
 public enum MeasurementType {
-    ONE(1),
-    TWO(2),
-    THREE(3);
+    ONE_SENSOR(0),
+    TWO_SENSORS(1),
+    THREE_SENSORS(2);
 
-    private Integer code;
-
+    final private Integer code;
 
     private MeasurementType(Integer code) {
         this.code = code;

@@ -46,6 +46,10 @@ public class Equipment implements Serializable {
         return MeasurementType.valueOf(measurementType);
     }
 
+//    public Integer getMeasurementType(){
+//        return measurementType;
+//    }
+
     public void setMeasurementType(MeasurementType measurementType) {
         if(measurementType != null)
             this.measurementType = measurementType.getCode();

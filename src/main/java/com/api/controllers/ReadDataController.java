@@ -18,17 +18,16 @@ public class ReadDataController {
     @Autowired
     ReadDataService service;
 
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<ReadData>> findAll() {
+        List<ReadData> list = service.findAll();
+        return ResponseEntity.ok(list);
+    }
     @GetMapping(value = "{id}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ReadData> findById(@PathVariable Long id) {
         ReadData data = service.findById(id);
         return ResponseEntity.ok().body(data);
-    }
-
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<ReadData>> findAll() {
-        List<ReadData> list = service.findAll();
-        return ResponseEntity.ok(list);
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
