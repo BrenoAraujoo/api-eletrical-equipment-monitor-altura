@@ -12,41 +12,37 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/v1/readdata")
+@RequestMapping(value = "/v1/readdata", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ReadDataController {
 
     @Autowired
     ReadDataService service;
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping
     public ResponseEntity<List<ReadData>> findAll() {
         List<ReadData> list = service.findAll();
         return ResponseEntity.ok(list);
     }
-    @GetMapping(value = "{id}",
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "{id}")
     public ResponseEntity<ReadData> findById(@PathVariable Long id) {
         ReadData data = service.findById(id);
         return ResponseEntity.ok().body(data);
     }
 
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping
     public ResponseEntity<ReadData> save(@RequestBody ReadData data) {
         service.save(data);
         return new ResponseEntity<ReadData>(data, HttpStatus.CREATED);
     }
 
-    @DeleteMapping(
-            value = "/{id}",
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "/{id}")
     public ResponseEntity<?> delete(@PathVariable(value = "id") Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping(
-            value = "/{id}",
-            produces = MediaType.APPLICATION_JSON_VALUE)
+            value = "/{id}")
     public ResponseEntity<ReadData> update(@RequestBody ReadData data) {
         service.update(data);
         return ResponseEntity.ok(data);

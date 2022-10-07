@@ -7,7 +7,7 @@ public enum MeasurementType {
 
     final private Integer code;
 
-    private MeasurementType(Integer code) {
+    MeasurementType(Integer code) {
         this.code = code;
     }
 

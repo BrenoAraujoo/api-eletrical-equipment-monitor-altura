@@ -4,7 +4,7 @@ package com.api.services;
 import com.api.entities.ReadData;
 import com.api.exceptions.ResourceNotFoundException;
 import com.api.repositories.ReadDataRepository;
-import jakarta.persistence.EntityNotFoundException;
+import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

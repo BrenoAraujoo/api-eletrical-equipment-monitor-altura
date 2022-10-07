@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/v1/equipment")
+@RequestMapping(value = "/v1/equipment", produces = MediaType.APPLICATION_JSON_VALUE)
 public class EquipmentController {
 
     @Autowired
@@ -23,8 +23,7 @@ public class EquipmentController {
         return ResponseEntity.ok(list);
     }
 
-    @GetMapping(value = "/{id}",
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{id}")
     public ResponseEntity<Equipment> findById(@PathVariable("id") Long id) {
         var equipment = service.findById(id);
         return ResponseEntity.ok(equipment);
@@ -36,15 +35,13 @@ public class EquipmentController {
         return ResponseEntity.status(HttpStatus.CREATED).body(equipment);
     }
 
-    @DeleteMapping(value = "/{id}",
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "/{id}")
     public ResponseEntity<?> delete(@PathVariable("id") Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping(value = "/{id}",
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{id}")
     public ResponseEntity<Equipment> update(@RequestBody Equipment equipment) {
         service.update(equipment);
         return ResponseEntity.ok(equipment);
