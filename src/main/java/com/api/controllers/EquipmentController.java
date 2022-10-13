@@ -1,7 +1,7 @@
 package com.api.controllers;
 
-import com.api.entities.Equipment;
-import com.api.services.EquipmentService;
+import com.api.domain.entities.Equipment;
+import com.api.domain.services.EquipmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -11,20 +11,20 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/v1/equipment", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/v1/equipment",
+        produces = MediaType.APPLICATION_JSON_VALUE)
 public class EquipmentController {
 
     @Autowired
-    EquipmentService service;
+    private EquipmentService service;
 
     @GetMapping
-    public ResponseEntity<List<Equipment>> findAll() {
-        List<Equipment> list = service.findAll();
-        return ResponseEntity.ok(list);
+    public List<Equipment> findAll() {
+        return service.findAll();
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Equipment> findById(@PathVariable("id") Long id) {
+    public ResponseEntity<Equipment> findById(@PathVariable  Long id) {
         var equipment = service.findById(id);
         return ResponseEntity.ok(equipment);
     }

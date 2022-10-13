@@ -1,6 +1,6 @@
-package com.api.services;
+package com.api.domain.services;
 
-import com.api.entities.Equipment;
+import com.api.domain.entities.Equipment;
 import com.api.exceptions.ResourceNotFoundException;
 import com.api.repositories.EquipmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;

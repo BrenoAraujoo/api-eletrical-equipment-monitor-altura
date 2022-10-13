@@ -1,7 +1,8 @@
 package com.api.controllers;
 
 
-import com.api.services.EquipmentReadingService;
+import com.api.domain.entities.EquipmentReading;
+import com.api.domain.services.EquipmentReadingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -11,27 +12,27 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/v1/readdata", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/v1/equipmentReading",
+        produces = MediaType.APPLICATION_JSON_VALUE)
 public class EquipmentReadingController {
 
     @Autowired
     EquipmentReadingService service;
 
     @GetMapping
-    public ResponseEntity<List<com.api.entities.EquipmentReading>> findAll() {
-        List<com.api.entities.EquipmentReading> list = service.findAll();
-        return ResponseEntity.ok(list);
+    public List<EquipmentReading> findAll() {
+       return service.findAll();
     }
-    @GetMapping(value = "{id}")
-    public ResponseEntity<com.api.entities.EquipmentReading> findById(@PathVariable Long id) {
-        com.api.entities.EquipmentReading data = service.findById(id);
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<EquipmentReading> findById(@PathVariable Long id) {
+        EquipmentReading data = service.findById(id);
         return ResponseEntity.ok().body(data);
     }
 
     @PostMapping
-    public ResponseEntity<com.api.entities.EquipmentReading> save(@RequestBody com.api.entities.EquipmentReading data) {
+    public ResponseEntity<EquipmentReading> save(@RequestBody EquipmentReading data) {
         service.save(data);
-        return new ResponseEntity<com.api.entities.EquipmentReading>(data, HttpStatus.CREATED);
+        return new ResponseEntity<EquipmentReading>(data, HttpStatus.CREATED);
     }
 
     @DeleteMapping(value = "/{id}")
@@ -42,7 +43,7 @@ public class EquipmentReadingController {
 
     @PutMapping(
             value = "/{id}")
-    public ResponseEntity<com.api.entities.EquipmentReading> update(@RequestBody com.api.entities.EquipmentReading data) {
+    public ResponseEntity<EquipmentReading> update(@RequestBody EquipmentReading data) {
         service.update(data);
         return ResponseEntity.ok(data);
 

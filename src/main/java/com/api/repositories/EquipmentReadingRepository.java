@@ -1,6 +1,6 @@
 package com.api.repositories;
 
-import com.api.entities.EquipmentReading;
+import com.api.domain.entities.EquipmentReading;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

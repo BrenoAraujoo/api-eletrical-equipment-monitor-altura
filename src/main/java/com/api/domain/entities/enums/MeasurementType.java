@@ -1,4 +1,4 @@
-package com.api.entities.enums;
+package com.api.domain.entities.enums;
 
 public enum MeasurementType {
     ONE_SENSOR(0),
@@ -21,7 +21,7 @@ public enum MeasurementType {
                 return value;
             }
         }
-        throw new IllegalArgumentException("Invalid code status");
+        throw new IllegalArgumentException("Invalid code status xxx");
     }
 
 }

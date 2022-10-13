@@ -1,6 +1,7 @@
-package com.api.services;
+package com.api.domain.services;
 
 
+import com.api.domain.entities.EquipmentReading;
 import com.api.exceptions.ResourceNotFoundException;
 import com.api.repositories.EquipmentReadingRepository;
 import javax.persistence.EntityNotFoundException;
@@ -14,15 +15,16 @@ public class EquipmentReadingService {
     @Autowired
     EquipmentReadingRepository repository;
 
-    public com.api.entities.EquipmentReading findById(Long id) {
-        return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Measure not found!"));
+    public EquipmentReading findById(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Measure not found!"));
     }
 
-    public List<com.api.entities.EquipmentReading> findAll() {
+    public List<EquipmentReading> findAll() {
         return repository.findAll();
     }
 
-    public com.api.entities.EquipmentReading save(com.api.entities.EquipmentReading measure) {
+    public EquipmentReading save(EquipmentReading measure) {
         return repository.save(measure);
     }
 
@@ -33,7 +35,7 @@ public class EquipmentReadingService {
         repository.deleteById(id);
     }
 
-    public void update(com.api.entities.EquipmentReading data) {
+    public void update(EquipmentReading data) {
         repository.findById(data.getId());
         repository.save(data);
     }

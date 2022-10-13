@@ -9,11 +9,11 @@
 
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.api-eletrical-equipament-monitor-altura</groupId>
-    <artifactId>api-eletrical-equipament-monitor-altura</artifactId>
+    <groupId>com.api-eletrical-equipment-monitor-altura</groupId>
+    <artifactId>api-eletrical-equipment-monitor-altura</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>com.api-eletrical-equipament-monitor-altura</name>
-    <description>api-eletrical-equipament-monitor-altura</description>
+    <name>com.api-eletrical-equipment-monitor-altura</name>
+    <description>api-eletrical-equipment-monitor-altura</description>
     <properties>
         <java.version>17</java.version>
     </properties>

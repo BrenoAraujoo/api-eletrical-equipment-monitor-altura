@@ -1,4 +1,4 @@
-package com.api.entities;
+package com.api.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import javax.persistence.*;
@@ -7,10 +7,10 @@ import java.time.Instant;
 
 
 @Entity
-@Table(name= "tb_read_data")
+@Table(name= "tb_equipment_reading")
 public class EquipmentReading implements Serializable {
 
-    private static final long serialVersionUID = 8705916799906125269L;
+    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

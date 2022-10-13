@@ -1,7 +1,7 @@
-package com.api.entities;
+package com.api.domain.entities;
 
 
-import com.api.entities.enums.MeasurementType;
+import com.api.domain.entities.enums.MeasurementType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;

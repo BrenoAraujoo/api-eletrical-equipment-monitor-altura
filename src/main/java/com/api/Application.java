@@ -1,6 +1,6 @@
 package com.api;
 
-import com.api.entities.enums.MeasurementType;
+import com.api.domain.entities.enums.MeasurementType;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

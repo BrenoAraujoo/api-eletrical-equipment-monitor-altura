@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/api-eletrical-equipament-monitor-altura?useTimezone=true&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/api-eletrical-equipment-monitor-altura?useTimezone=true&serverTimezone=UTC
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
