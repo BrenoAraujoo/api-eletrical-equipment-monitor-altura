@@ -4,3 +4,7 @@
 #    properties:
 #      hibernate:
 #        format_sql: true
+spring:
+  output:
+    ansi:
+      enabled: ALWAYS

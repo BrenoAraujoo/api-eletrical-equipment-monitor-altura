@@ -1,9 +1,8 @@
 package com.api.services;
 
 
-import com.api.entities.ReadData;
 import com.api.exceptions.ResourceNotFoundException;
-import com.api.repositories.ReadDataRepository;
+import com.api.repositories.EquipmentReadingRepository;
 import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,19 +10,19 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class ReadDataService {
+public class EquipmentReadingService {
     @Autowired
-    ReadDataRepository repository;
+    EquipmentReadingRepository repository;
 
-    public ReadData findById(Long id) {
+    public com.api.entities.EquipmentReading findById(Long id) {
         return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Measure not found!"));
     }
 
-    public List<ReadData> findAll() {
+    public List<com.api.entities.EquipmentReading> findAll() {
         return repository.findAll();
     }
 
-    public ReadData save(ReadData measure) {
+    public com.api.entities.EquipmentReading save(com.api.entities.EquipmentReading measure) {
         return repository.save(measure);
     }
 
@@ -34,7 +33,7 @@ public class ReadDataService {
         repository.deleteById(id);
     }
 
-    public void update(ReadData data) {
+    public void update(com.api.entities.EquipmentReading data) {
         repository.findById(data.getId());
         repository.save(data);
     }

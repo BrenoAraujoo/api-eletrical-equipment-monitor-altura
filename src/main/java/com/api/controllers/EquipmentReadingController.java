@@ -1,8 +1,7 @@
 package com.api.controllers;
 
 
-import com.api.entities.ReadData;
-import com.api.services.ReadDataService;
+import com.api.services.EquipmentReadingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -13,26 +12,26 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/v1/readdata", produces = MediaType.APPLICATION_JSON_VALUE)
-public class ReadDataController {
+public class EquipmentReadingController {
 
     @Autowired
-    ReadDataService service;
+    EquipmentReadingService service;
 
     @GetMapping
-    public ResponseEntity<List<ReadData>> findAll() {
-        List<ReadData> list = service.findAll();
+    public ResponseEntity<List<com.api.entities.EquipmentReading>> findAll() {
+        List<com.api.entities.EquipmentReading> list = service.findAll();
         return ResponseEntity.ok(list);
     }
     @GetMapping(value = "{id}")
-    public ResponseEntity<ReadData> findById(@PathVariable Long id) {
-        ReadData data = service.findById(id);
+    public ResponseEntity<com.api.entities.EquipmentReading> findById(@PathVariable Long id) {
+        com.api.entities.EquipmentReading data = service.findById(id);
         return ResponseEntity.ok().body(data);
     }
 
     @PostMapping
-    public ResponseEntity<ReadData> save(@RequestBody ReadData data) {
+    public ResponseEntity<com.api.entities.EquipmentReading> save(@RequestBody com.api.entities.EquipmentReading data) {
         service.save(data);
-        return new ResponseEntity<ReadData>(data, HttpStatus.CREATED);
+        return new ResponseEntity<com.api.entities.EquipmentReading>(data, HttpStatus.CREATED);
     }
 
     @DeleteMapping(value = "/{id}")
@@ -43,7 +42,7 @@ public class ReadDataController {
 
     @PutMapping(
             value = "/{id}")
-    public ResponseEntity<ReadData> update(@RequestBody ReadData data) {
+    public ResponseEntity<com.api.entities.EquipmentReading> update(@RequestBody com.api.entities.EquipmentReading data) {
         service.update(data);
         return ResponseEntity.ok(data);
 

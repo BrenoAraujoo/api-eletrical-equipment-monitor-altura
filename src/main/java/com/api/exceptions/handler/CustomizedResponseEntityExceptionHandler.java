@@ -16,7 +16,7 @@ import java.util.concurrent.ExecutionException;
 public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
-    public final ResponseEntity<StandardError> handlAllExceptions(Exception ex, WebRequest request){
+    public final ResponseEntity<StandardError> handleAllExceptions(Exception ex, WebRequest request){
     StandardError standardError = new StandardError(new Date(),ex.getMessage(),request.getDescription(false));
     return new ResponseEntity<>(standardError, HttpStatus.INTERNAL_SERVER_ERROR);
     }
