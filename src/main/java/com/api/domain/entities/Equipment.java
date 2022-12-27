@@ -24,6 +24,7 @@ public class Equipment implements Serializable {
 
 
     private String cod;
+    private String name;
     private String description;
     private Integer measurementType;
 

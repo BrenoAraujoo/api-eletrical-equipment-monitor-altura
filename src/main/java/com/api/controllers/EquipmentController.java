@@ -30,9 +30,9 @@ public class EquipmentController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Equipment> save(@RequestBody Equipment equipment) {
+    public Equipment save(@RequestBody Equipment equipment) {
         var entity = equipmentService.save(equipment);
-        return ResponseEntity.status(HttpStatus.CREATED).body(equipment);
+        return entity;
     }
 
     @DeleteMapping(value = "/{id}")
