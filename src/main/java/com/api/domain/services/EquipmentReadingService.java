@@ -2,7 +2,6 @@ package com.api.domain.services;
 
 
 import com.api.domain.entities.EquipmentReading;
-import com.api.exceptions.ResourceNotFoundException;
 import com.api.repositories.EquipmentReadingRepository;
 import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,7 @@ public class EquipmentReadingService {
 
     public EquipmentReading findById(Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Measure not found!"));
+                .orElseThrow(() -> new EntityNotFoundException("Measure not found!"));
     }
 
     public List<EquipmentReading> findAll() {

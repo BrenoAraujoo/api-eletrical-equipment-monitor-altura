@@ -1,8 +1,8 @@
 package com.api.domain.services;
 
 import com.api.domain.entities.Equipment;
-import com.api.exceptions.ResourceNotFoundException;
 import com.api.repositories.EquipmentRepository;
+import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +19,7 @@ public class EquipmentService {
 
     public Equipment findById(Long id){
         return repository.findById(id)
-                .orElseThrow(()-> new ResourceNotFoundException("Equipment not found!"));
+                .orElseThrow(()-> new EntityNotFoundException("Equipment not found!"));
     }
 
     public Equipment save(Equipment equipment){
@@ -28,7 +28,7 @@ public class EquipmentService {
 
     public void delete(Long id){
         if(repository.findById(id).isEmpty()){
-            throw new ResourceNotFoundException("Equipment not found");
+            throw new EntityNotFoundException("Equipment not found");
         }
         repository.deleteById(id);
     }
