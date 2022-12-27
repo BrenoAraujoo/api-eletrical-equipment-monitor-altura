@@ -16,34 +16,36 @@ import java.util.List;
 public class EquipmentController {
 
     @Autowired
-    private EquipmentService service;
+    private EquipmentService equipmentService;
 
     @GetMapping
     public List<Equipment> findAll() {
-        return service.findAll();
+        return equipmentService.findAll();
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Equipment> findById(@PathVariable  Long id) {
-        var equipment = service.findById(id);
-        return ResponseEntity.ok(equipment);
+    public Equipment findById(@PathVariable  Long id) {
+        return equipmentService.findOrFail(id);
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Equipment> save(@RequestBody Equipment equipment) {
-        var entity = service.save(equipment);
+        var entity = equipmentService.save(equipment);
         return ResponseEntity.status(HttpStatus.CREATED).body(equipment);
     }
 
     @DeleteMapping(value = "/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<?> delete(@PathVariable("id") Long id) {
-        service.delete(id);
+        equipmentService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping(value = "/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Equipment> update(@RequestBody Equipment equipment) {
-        service.update(equipment);
+        equipmentService.update(equipment);
         return ResponseEntity.ok(equipment);
     }
 }

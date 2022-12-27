@@ -2,8 +2,8 @@ package com.api.domain.services;
 
 
 import com.api.domain.entities.EquipmentReading;
+import com.api.domain.entities.exceptions.EntityNotFoundException;
 import com.api.repositories.EquipmentReadingRepository;
-import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
