@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/v1/equipmentReading",
+@RequestMapping(value = "/v1/equipment-readings",
         produces = MediaType.APPLICATION_JSON_VALUE)
 public class EquipmentReadingController {
 

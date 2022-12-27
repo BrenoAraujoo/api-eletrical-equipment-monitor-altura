@@ -21,6 +21,6 @@ public class EquipmentReading implements Serializable {
     private Double sensorB;
     private Double sensorC;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "GMT")
-    private Instant dateTime;
+    private Instant date;
 
 }
