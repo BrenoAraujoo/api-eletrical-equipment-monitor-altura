@@ -1,6 +1,7 @@
 package com.api.exceptionhandler;
 
 
+import com.api.domain.entities.exceptions.EntityInUseException;
 import com.api.domain.entities.exceptions.EntityNotFoundException;
 import java.time.LocalDateTime;
 import org.springframework.http.HttpHeaders;
@@ -16,7 +17,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
 
     @ExceptionHandler(EntityNotFoundException.class)
-    ResponseEntity<Object> handleEntityNotFound(EntityNotFoundException ex, WebRequest request) {
+    ResponseEntity<?> handleEntityNotFound(EntityNotFoundException ex, WebRequest request) {
 
         HttpStatus status = HttpStatus.NOT_FOUND;
         ProblemType problemType = ProblemType.ERROR_RESOURCE_NOT_FOUND;
@@ -25,6 +26,16 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex,problem,new HttpHeaders(),status,request);
     }
 
+    @ExceptionHandler(EntityInUseException.class)
+    ResponseEntity<?> handleEntityInUse(EntityInUseException ex, WebRequest request){
+        HttpStatus status = HttpStatus.CONFLICT;
+        ProblemType problemType = ProblemType.ERROR_RESOURCE_IN_USE;
+
+        Problem problem = createProblemBuilder(status,problemType,ex.getMessage()).build();
+
+        return handleExceptionInternal(ex,problem, new HttpHeaders(),status,request);
+
+    }
     private Problem.ProblemBuilder createProblemBuilder(HttpStatus status, ProblemType problemType, String detail) {
         return Problem.builder()
                         .status(status.value())

@@ -19,7 +19,7 @@ insert into tb_equipment (cod, name, description, measurement_type) values ('eds
 --tb_equipment_reading
 
 insert into tb_equipment_reading (equipment_id, sensora, sensorb, sensorc,date) values(3,'20.0','30.0','12.0','2022-01-01T14:15:10');
-insert into tb_equipment_reading (equipment_id, sensora, sensorb, sensorc,date) values(3,'120.0','130.0','12.0','2022-12-12T17:15:10'); fi
+insert into tb_equipment_reading (equipment_id, sensora, sensorb, sensorc,date) values(3,'120.0','130.0','12.0','2022-12-12T17:15:10');
 
 insert into tb_equipment_reading (equipment_id, sensora,date) values(1,'21.0','2022-11-11T11:22:10');
 insert into tb_equipment_reading (equipment_id, sensora, sensorb,date) values(2,'2.0','3.0','2022-11-11T11:22:10');

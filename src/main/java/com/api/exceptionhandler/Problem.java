@@ -3,6 +3,7 @@ package com.api.exceptionhandler;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -18,10 +19,11 @@ public class Problem {
     private String userMessage;
     private LocalDateTime timestamp;
 
+    private List<Object> objectList;
 
     @Getter
     @Builder
-    public static class Field {
+    public static class Object {
         private String name;
         private String userMessage;
     }
