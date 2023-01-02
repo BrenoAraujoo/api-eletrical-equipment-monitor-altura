@@ -13,7 +13,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -23,12 +22,14 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
 
-    public static final String MSG_INTERNAL_SERVER_ERROR = "Internal server error. Try again, if the problem persists, contact your system administrator";
+    public static final String MSG_GENERIC_USER_MESSAGE = "Internal server error. Try again, if the problem persists, contact your system administrator";
+    public static final String MSG_INVALID_FORMAT =
+            "The property received the value '%s' which is of an invalid type. Correct and enter a value compatible with '%s'";
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleUncaught(Exception ex, WebRequest request) {
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
-        String detail = MSG_INTERNAL_SERVER_ERROR;
+        String detail = MSG_GENERIC_USER_MESSAGE;
         ProblemType problemType = ProblemType.ERROR_ILLEGIBLE_MESSAGE;
 
         Problem problem = createProblemBuilder(status, problemType, detail).build();
@@ -80,22 +81,32 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     }
 
+
+
+
+
+
+
     @Override
     protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
 
-//        if(body == null){
-//            body = Problem.builder()
-//                    .timestamp(LocalDateTime.now())
-//                    .userMessage(status.getReasonPhrase())
-//                    .detail(MSG_INTERNAL_SERVER_ERROR)
-//                    .status(status.value())
-//                    .build();
-//        }
-
-
-        if(body == null){
-            body = "Corpo dessa exception é null";
-        }
+        if(body == null)
+            body = Problem.builder()
+                    .timestamp(LocalDateTime.now())
+                    .title(status.getReasonPhrase())
+                    .userMessage(MSG_GENERIC_USER_MESSAGE)
+                    .status(status.value())
+                    .build();
+        /*
+        All methods from ResponseEntityExceptionHandler that are instance of String
+         */
+        else if (body instanceof String)
+            body = Problem.builder()
+                    .timestamp(LocalDateTime.now())
+                    .title((String)body)
+                    .userMessage(MSG_GENERIC_USER_MESSAGE)
+                    .status(status.value())
+                    .build();
 
         return super.handleExceptionInternal(ex, body, headers, status, request);
     }
@@ -105,10 +116,13 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         String path = joinPath(ex);
 
         ProblemType problemType = ProblemType.ERROR_ILLEGIBLE_MESSAGE;
-        String detail =String.format("The property received the value '%s' which is of an invalid type. Correct and enter a value compatible with '%s'","valor1","valor2)");
-        Problem problem = createProblemBuilder(status,problemType,detail).build();
+
+
+//        String detail = String.format(MSG_INVALID_FORMAT,request.getParameter("");
+        Problem problem = createProblemBuilder(status,problemType,"teste").build();
 
         return handleExceptionInternal(ex,problem,new HttpHeaders(),status,request);
+
     }
 
     private String joinPath(JsonMappingException ex) {
