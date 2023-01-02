@@ -9,6 +9,7 @@ import javax.persistence.Table;
 import javax.persistence.GenerationType;
 
 import java.io.Serializable;
+import javax.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;
 
@@ -24,6 +25,7 @@ public class Equipment implements Serializable {
 
 
     private String cod;
+    @NotBlank
     private String name;
     private String description;
     private Integer measurementType;

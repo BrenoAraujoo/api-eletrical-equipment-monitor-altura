@@ -7,12 +7,15 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.PropertyBindingException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -24,7 +27,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     public static final String MSG_GENERIC_USER_MESSAGE = "Internal server error. Try again, if the problem persists, contact your system administrator";
     public static final String MSG_INVALID_FORMAT =
-            "The property received the value '%s' which is of an invalid type. Correct and enter a value compatible with '%s'";
+            "The property '%s' received the value '%s' which is of an invalid type. Correct and enter a value compatible with '%s'";
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleUncaught(Exception ex, WebRequest request) {
@@ -60,37 +63,9 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
 
     @Override
-    public ResponseEntity<Object> handleHttpMessageNotReadable
-            (HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-
-//        Throwable rootCause = ex.getRootCause();
-        Throwable rootCause = ExceptionUtils.getRootCause(ex);
-
-        if (rootCause instanceof InvalidFormatException) {
-            return handleInvalidFormatException((InvalidFormatException) rootCause,status,headers,request);
-        } else if (rootCause instanceof PropertyBindingException) {
-            return ResponseEntity.ok("Property biding exception");
-        }
-
-        ProblemType problemType = ProblemType.ERROR_ILLEGIBLE_MESSAGE;
-        String detail = "The request body is invalid. Check syntax error.";
-        Problem problem = createProblemBuilder(status, problemType, detail).build();
-
-
-        return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
-
-    }
-
-
-
-
-
-
-
-    @Override
     protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
 
-        if(body == null)
+        if (body == null)
             body = Problem.builder()
                     .timestamp(LocalDateTime.now())
                     .title(status.getReasonPhrase())
@@ -103,7 +78,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         else if (body instanceof String)
             body = Problem.builder()
                     .timestamp(LocalDateTime.now())
-                    .title((String)body)
+                    .title((String) body)
                     .userMessage(MSG_GENERIC_USER_MESSAGE)
                     .status(status.value())
                     .build();
@@ -111,28 +86,74 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return super.handleExceptionInternal(ex, body, headers, status, request);
     }
 
-    public ResponseEntity<Object> handleInvalidFormatException(InvalidFormatException ex, HttpStatus  status, HttpHeaders headers, WebRequest request){
+    @Override
+    public ResponseEntity<Object> handleHttpMessageNotReadable
+            (HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+
+//        Throwable rootCause = ex.getRootCause();
+        Throwable rootCause = ExceptionUtils.getRootCause(ex);
+
+        if (rootCause instanceof InvalidFormatException) {
+            return handleInvalidFormat((InvalidFormatException) rootCause, status, headers, request);
+        } else if (rootCause instanceof PropertyBindingException) {
+            return handlePropertyBinding((PropertyBindingException) rootCause, new HttpHeaders(), status, request);
+        }
+
+        ProblemType problemType = ProblemType.ERROR_ILLEGIBLE_MESSAGE;
+        String detail = "The request body is invalid. Check syntax error.";
+        Problem problem = createProblemBuilder(status, problemType, detail).build();
+
+        return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
+
+    }
+
+    public ResponseEntity<Object> handlePropertyBinding
+            (PropertyBindingException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+
+        String path = joinPath(ex);
+        String detail = String.format("The property '%s' doesn't exists. Correct and try again.",path);
+        System.out.println(detail);
+        ProblemType problemType = ProblemType.ERROR_INVALID_DATA;
+        Problem problem = createProblemBuilder(status, problemType, detail)
+                .userMessage(MSG_GENERIC_USER_MESSAGE)
+                .build();
+
+        return handleExceptionInternal(ex,problem,new HttpHeaders(),status,request);
+    }
+
+    public ResponseEntity<Object> handleInvalidFormat(InvalidFormatException ex, HttpStatus status, HttpHeaders headers, WebRequest request) {
 
         String path = joinPath(ex);
 
         ProblemType problemType = ProblemType.ERROR_ILLEGIBLE_MESSAGE;
+        String detail = String.format(MSG_INVALID_FORMAT, path, ex.getValue(), ex.getTargetType().getSimpleName());
+        Problem problem = createProblemBuilder(status, problemType, detail).build();
 
+        return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
 
-//        String detail = String.format(MSG_INVALID_FORMAT,request.getParameter("");
-        Problem problem = createProblemBuilder(status,problemType,"teste").build();
+    }
 
-        return handleExceptionInternal(ex,problem,new HttpHeaders(),status,request);
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
 
+        BindingResult bindingResult = ex.getBindingResult();
+
+        return ResponseEntity.ok(bindingResult.getAllErrors());
     }
 
     private String joinPath(JsonMappingException ex) {
 
         var references = ex.getPath();
-
+        System.out.println(references);
         return references.stream()
                 .map(JsonMappingException.Reference::getFieldName)
                 .collect(Collectors.joining("."));
+    }
 
+    private String joinObject(List<Problem.Object> list) {
+        return list.stream()
+                .map(Problem.Object::getName)
+                .collect(Collectors.joining(" e "));
     }
 
 

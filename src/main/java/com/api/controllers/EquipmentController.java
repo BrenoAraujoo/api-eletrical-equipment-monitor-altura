@@ -2,6 +2,7 @@ package com.api.controllers;
 
 import com.api.domain.entities.Equipment;
 import com.api.domain.services.EquipmentService;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -30,7 +31,7 @@ public class EquipmentController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Equipment save(@RequestBody Equipment equipment) {
+    public Equipment save(@RequestBody @Valid Equipment equipment) {
         var entity = equipmentService.save(equipment);
         return entity;
     }
