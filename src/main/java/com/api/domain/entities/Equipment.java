@@ -10,7 +10,7 @@ import javax.persistence.GenerationType;
 
 import java.io.Serializable;
 import javax.validation.constraints.NotBlank;
-import lombok.Builder;
+import javax.validation.constraints.Size;
 import lombok.Data;
 
 @Entity
@@ -25,8 +25,9 @@ public class Equipment implements Serializable {
 
 
     private String cod;
-    @NotBlank
+    @NotBlank(message = "name must not be null")
     private String name;
+    @Size(max = 2)
     private String description;
     private Integer measurementType;
 

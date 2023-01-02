@@ -136,9 +136,28 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
 
-        BindingResult bindingResult = ex.getBindingResult();
+//        BindingResult bindingResult = ex.getBindingResult();
 
-        return ResponseEntity.ok(bindingResult.getAllErrors());
+        var objectError = joinErrors(ex.getBindingResult());
+
+        return ResponseEntity.ok(objectError);
+    }
+
+    private List<Problem.Object> joinErrors(BindingResult bindingResult){
+
+        var objectError = bindingResult.getAllErrors()
+                .stream()
+                .map(obj -> {
+                        String message = obj.getDefaultMessage();
+                        String name =obj.getObjectName();
+
+                        return Problem.Object.builder()
+                                .userMessage(message)
+                                .name(name)
+                                .build();
+                }).toList();
+
+        return objectError;
     }
 
     private String joinPath(JsonMappingException ex) {
@@ -150,7 +169,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .collect(Collectors.joining("."));
     }
 
-    private String joinObject(List<Problem.Object> list) {
+    private String joinErrors(List<Problem.Object> list) {
         return list.stream()
                 .map(Problem.Object::getName)
                 .collect(Collectors.joining(" e "));
