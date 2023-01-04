@@ -24,4 +24,21 @@ public enum MeasurementType {
         throw new IllegalArgumentException("Invalid code status xxx");
     }
 
+    public static String getAllMeasurementCode() {
+
+        int measurementType = MeasurementType.values().length;
+        StringBuilder code = new StringBuilder()
+                .append("[ ");
+
+        for (MeasurementType value : MeasurementType.values()) {
+            code.append(value.getCode());
+            if (value.getCode() == measurementType - 1) {
+                code.append(" ]");
+            } else {
+                code.append(", ");
+            }
+        }
+        return code.toString();
+    }
+
 }

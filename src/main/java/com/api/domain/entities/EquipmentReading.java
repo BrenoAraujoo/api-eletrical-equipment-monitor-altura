@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.Data;
 
 @Entity
@@ -17,6 +19,8 @@ public class EquipmentReading implements Serializable {
     private Long id;
     @ManyToOne()
     private Equipment equipment;
+
+    @NotNull
     private Double sensorA;
     private Double sensorB;
     private Double sensorC;

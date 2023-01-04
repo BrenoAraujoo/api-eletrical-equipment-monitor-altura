@@ -1,6 +1,7 @@
 package com.api.exceptionhandler;
 
 
+import com.api.domain.entities.enums.MeasurementType;
 import com.api.domain.entities.exceptions.EntityInUseException;
 import com.api.domain.entities.exceptions.EntityNotFoundException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -10,11 +11,15 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -24,10 +29,14 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
-
     public static final String MSG_GENERIC_USER_MESSAGE = "Internal server error. Try again, if the problem persists, contact your system administrator";
     public static final String MSG_INVALID_FORMAT =
             "The property '%s' received the value '%s' which is of an invalid type. Correct and enter a value compatible with '%s'";
+
+    public static final String MSG_INVALID_MEASUREMENT = "The property '%s' received the value '%s' that doesn't exists. " +
+            "Please use one of the  available codes: %s ";
+    @Autowired
+    private MessageSource messageSource;
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleUncaught(Exception ex, WebRequest request) {
@@ -60,7 +69,6 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
 
     }
-
 
     @Override
     protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
@@ -96,7 +104,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         if (rootCause instanceof InvalidFormatException) {
             return handleInvalidFormat((InvalidFormatException) rootCause, status, headers, request);
         } else if (rootCause instanceof PropertyBindingException) {
-            return handlePropertyBinding((PropertyBindingException) rootCause, new HttpHeaders(), status, request);
+            return handlePropertyBinding((PropertyBindingException) rootCause, status, headers, request);
         }
 
         ProblemType problemType = ProblemType.ERROR_ILLEGIBLE_MESSAGE;
@@ -108,73 +116,59 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     public ResponseEntity<Object> handlePropertyBinding
-            (PropertyBindingException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+            (PropertyBindingException ex, HttpStatus status, HttpHeaders headers, WebRequest request) {
 
         String path = joinPath(ex);
-        String detail = String.format("The property '%s' doesn't exists. Correct and try again.",path);
-        System.out.println(detail);
+
+        String detail = String.format("The property '%s' doesn't exists. Correct and try again.", path);
+
         ProblemType problemType = ProblemType.ERROR_INVALID_DATA;
         Problem problem = createProblemBuilder(status, problemType, detail)
                 .userMessage(MSG_GENERIC_USER_MESSAGE)
                 .build();
 
-        return handleExceptionInternal(ex,problem,new HttpHeaders(),status,request);
+        return handleExceptionInternal(ex, problem, headers, status, request);
     }
 
-    public ResponseEntity<Object> handleInvalidFormat(InvalidFormatException ex, HttpStatus status, HttpHeaders headers, WebRequest request) {
+    public ResponseEntity<Object> handleInvalidFormat
+            (InvalidFormatException ex, HttpStatus status, HttpHeaders headers, WebRequest request) {
 
         String path = joinPath(ex);
+        String userMessage = null;
+        ProblemType problemType = ProblemType.ERROR_INVALID_DATA;
 
-        ProblemType problemType = ProblemType.ERROR_ILLEGIBLE_MESSAGE;
         String detail = String.format(MSG_INVALID_FORMAT, path, ex.getValue(), ex.getTargetType().getSimpleName());
-        Problem problem = createProblemBuilder(status, problemType, detail).build();
+        if (path.equals("measurementType")) {
+            userMessage = String.format(MSG_INVALID_MEASUREMENT,
+                    path, ex.getValue(), MeasurementType.getAllMeasurementCode());
+        }
 
+        Problem problem = createProblemBuilder(status, problemType, detail)
+                .userMessage(userMessage)
+                .build();
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
 
     }
 
     @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    protected ResponseEntity<Object> handleMethodArgumentNotValid
+            (MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        BindingResult bindingResult = ex.getBindingResult();
 
-//        BindingResult bindingResult = ex.getBindingResult();
 
-        var objectError = joinErrors(ex.getBindingResult());
+        List<Problem.Object> objects = joinErrors(bindingResult);
 
-        return ResponseEntity.ok(objectError);
-    }
-
-    private List<Problem.Object> joinErrors(BindingResult bindingResult){
-
-        var objectError = bindingResult.getAllErrors()
-                .stream()
-                .map(obj -> {
-                        String message = obj.getDefaultMessage();
-                        String name =obj.getObjectName();
-
-                        return Problem.Object.builder()
-                                .userMessage(message)
-                                .name(name)
-                                .build();
-                }).toList();
-
-        return objectError;
+        return ResponseEntity.ok(objects);
     }
 
     private String joinPath(JsonMappingException ex) {
 
         var references = ex.getPath();
-        System.out.println(references);
+
         return references.stream()
                 .map(JsonMappingException.Reference::getFieldName)
                 .collect(Collectors.joining("."));
     }
-
-    private String joinErrors(List<Problem.Object> list) {
-        return list.stream()
-                .map(Problem.Object::getName)
-                .collect(Collectors.joining(" e "));
-    }
-
 
     private Problem.ProblemBuilder createProblemBuilder(HttpStatus status, ProblemType problemType, String detail) {
         return Problem.builder()
@@ -182,6 +176,24 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .timestamp(LocalDateTime.now())
                 .title(problemType.getTitle())
                 .detail(detail);
+    }
+
+    private List<Problem.Object> joinErrors(BindingResult bindingResult) {
+
+        var objectError = bindingResult.getAllErrors()
+                .stream()
+                .map(obj -> {
+//                    String message = obj.getDefaultMessage();
+                    String message = messageSource.getMessage(obj, LocaleContextHolder.getLocale());
+                    String name = ((FieldError) obj).getField();
+
+                    if (bindingResult instanceof FieldError) name = ((FieldError) obj).getField();
+                    return Problem.Object.builder()
+                            .userMessage(message)
+                            .name(name)
+                            .build();
+                }).toList();
+        return objectError;
     }
 
 }
