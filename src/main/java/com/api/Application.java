@@ -15,9 +15,7 @@ public class Application implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		for(MeasurementType t: MeasurementType.values()){
-			System.out.println(" ---- >" + t.getCode());
-		}
+
 	}
 }
 

@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -35,6 +36,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     public static final String MSG_INVALID_MEASUREMENT = "The property '%s' received the value '%s' that doesn't exists. " +
             "Please use one of the  available codes: %s ";
+    public static final String MSG_NONEXISTENT_PROPERTY = "The property '%s' doesn't exists. Correct and try again.";
     @Autowired
     private MessageSource messageSource;
 
@@ -120,9 +122,9 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
         String path = joinPath(ex);
 
-        String detail = String.format("The property '%s' doesn't exists. Correct and try again.", path);
+        String detail = String.format(MSG_NONEXISTENT_PROPERTY, path);
 
-        ProblemType problemType = ProblemType.ERROR_INVALID_DATA;
+        ProblemType problemType = ProblemType.ERROR_INVALID_PROPERTY;
         Problem problem = createProblemBuilder(status, problemType, detail)
                 .userMessage(MSG_GENERIC_USER_MESSAGE)
                 .build();
@@ -135,7 +137,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
         String path = joinPath(ex);
         String userMessage = null;
-        ProblemType problemType = ProblemType.ERROR_INVALID_DATA;
+        ProblemType problemType = ProblemType.ERROR_INVALID_PROPERTY;
 
         String detail = String.format(MSG_INVALID_FORMAT, path, ex.getValue(), ex.getTargetType().getSimpleName());
         if (path.equals("measurementType")) {
@@ -154,11 +156,17 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleMethodArgumentNotValid
             (MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         BindingResult bindingResult = ex.getBindingResult();
-
-
+        String detail = "Um ou mais campos estão inválidos. Faça o preenchimento correto e tente novamente.";
         List<Problem.Object> objects = joinErrors(bindingResult);
 
-        return ResponseEntity.ok(objects);
+        ProblemType problemType = ProblemType.ERROR_INVALID_PROPERTY;
+
+        Problem problem = createProblemBuilder(status,problemType,detail)
+                .objectList(objects)
+                .userMessage(detail)
+                .build();
+
+        return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
     }
 
     private String joinPath(JsonMappingException ex) {
@@ -180,20 +188,19 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     private List<Problem.Object> joinErrors(BindingResult bindingResult) {
 
-        var objectError = bindingResult.getAllErrors()
+        return bindingResult.getAllErrors()
                 .stream()
-                .map(obj -> {
-//                    String message = obj.getDefaultMessage();
-                    String message = messageSource.getMessage(obj, LocaleContextHolder.getLocale());
-                    String name = ((FieldError) obj).getField();
+                .map(objectError -> {
+//                    String message = objectError.getDefaultMessage();
+                    String message = messageSource.getMessage(objectError, LocaleContextHolder.getLocale());
+                    String name = ((FieldError) objectError).getField();
 
-                    if (bindingResult instanceof FieldError) name = ((FieldError) obj).getField();
+                    if (bindingResult instanceof FieldError) name = ((FieldError) objectError).getField();
                     return Problem.Object.builder()
                             .userMessage(message)
                             .name(name)
                             .build();
                 }).toList();
-        return objectError;
     }
 
 }

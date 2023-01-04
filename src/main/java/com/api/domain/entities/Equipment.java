@@ -1,21 +1,11 @@
 package com.api.domain.entities;
 
 
-import com.api.core.validation.Groups;
 import com.api.domain.entities.enums.MeasurementType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.GenerationType;
-
 import java.io.Serializable;
-import javax.validation.Valid;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
-import javax.validation.groups.ConvertGroup;
 import lombok.Data;
-import org.springframework.format.annotation.NumberFormat;
 
 @Entity
 @Table(name = "tb_equipment")
@@ -28,9 +18,11 @@ public class Equipment implements Serializable {
     private Long id;
 
 
+    @NotBlank
     private String cod;
     @NotBlank
     private String name;
+
     private String description;
 
 //    @ConvertGroup(to = Groups.MeasurementTypeCod.class)
